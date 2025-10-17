@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Code Quiz — Completo</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+    <div class="container py-4">
+        <!-- Topbar -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex gap-3 align-items-center">
+                <i class="bi bi-lightbulb-fill fs-2 text-warning"></i>
+                <div>
+                    <h1 class="h4 mb-0">Code Quiz</h1>
+                    <small class="text-muted">Programación para jóvenes 7-18 años</small>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 align-items-center">
+                <div class="form-check form-switch me-2">
+                    <input class="form-check-input" type="checkbox" id="dark-toggle">
+                    <label class="form-check-label" for="dark-toggle">Modo oscuro</label>
+                </div>
+                <button id="open-history" class="btn btn-outline-secondary btn-sm" title="Historial"><i
+                        class="bi bi-clock-history"></i></button>
+            </div>
+        </div>
+
+        <!-- Welcome / Level Selection -->
+        <section id="welcome-screen">
+            <div class="text-center mb-3">
+                <h2 class="mb-1">¡Bienvenido a Code Quiz!</h2>
+                <p class="text-muted">Selecciona tu nivel para empezar</p>
+            </div>
+
+            <div id="level-error" class="mb-3"></div>
+
+            <div class="row row-cols-1 row-cols-md-3 g-4" id="level-container">
+                <!-- cards generadas -->
+            </div>
+        </section>
+
+        <!-- QUIZ SCREEN -->
+        <section id="quiz-screen" class="d-none">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                    <span id="level-label" class="fw-bold"></span>
+                    <span id="q-progress" class="ms-3 text-muted"></span>
+                </div>
+                <div class="d-flex gap-2 align-items-center">
+                    <div id="timer" class="badge bg-dark text-white d-none"></div>
+                    <div id="score" class="badge bg-success">Puntaje: 0</div>
+                </div>
+            </div>
+
+            <div id="question-card" class="card p-3 mb-3">
+                <h3 id="question-text">Cargando...</h3>
+                <div id="options" class="d-grid gap-2 mt-2"></div>
+            </div>
+            <div class="d-flex justify-content-end align-items-center">
+                <button id="quit-btn" class="btn btn-outline-secondary text-danger"><i class="bi bi-x-circle"></i>
+                    Salir</button>
+            </div>
+
+            <div class="progress mt-3">
+                <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+            </div>
+        </section>
+
+        <!-- RESULT SCREEN -->
+        <section id="result-screen" class="d-none text-center">
+            <h2 id="result-title">Resultado</h2>
+            <p id="result-summary" class="mb-2"></p>
+
+            <div class="mb-3">
+                <h3 id="result-percent"></h3>
+                <p id="result-best" class="text-muted"></p>
+            </div>
+
+            <div class="d-flex justify-content-center gap-2">
+                <button id="retry-btn" class="btn btn-primary"><i class="bi bi-arrow-repeat"></i> Reintentar</button>
+                <button id="home-btn" class="btn btn-outline-secondary"><i class="bi bi-house"></i> Inicio</button>
+            </div>
+        </section>
+
+        <!-- CONFIG MODAL -->
+        <div class="modal fade" id="configModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Configuración del Quiz</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="q-count" class="form-label">Número de preguntas</label>
+                            <select id="q-count" class="form-select">
+                                <option value="5">5 preguntas</option>
+                                <option value="10" selected>10 preguntas</option>
+                                <option value="15">15 preguntas</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Temporizador</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="timer-mode" value="none"
+                                    id="timer-none">
+                                <label class="form-check-label" for="timer-none">Sin temporizador</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="timer-mode" value="per"
+                                    id="timer-per">
+                                <label class="form-check-label" for="timer-per">Por pregunta</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="timer-mode" value="total"
+                                    id="timer-total" checked>
+                                <label class="form-check-label" for="timer-total">Tiempo total</label>
+                            </div>
+                            <div>
+                                <label class="form-label">Feedback</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="feedback-mode" value="instant"
+                                        id="feedback-instant" checked>
+                                    <label class="form-check-label" for="feedback-instant">Mostrar respuesta
+                                        inmediatamente</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="feedback-mode" value="final"
+                                        id="feedback-final">
+                                    <label class="form-check-label" for="feedback-final">Mostrar al final</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="start-quiz-btn" class="btn btn-primary">Iniciar Quiz</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <!-- HISTORY MODAL -->
+<div class="modal fade" id="history-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- Título del modal -->
+                <h5 class="modal-title"><i class="bi bi-clock-history"></i> Historial</h5>
+                
+                <!-- Botón de cerrar -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            
+            <!-- Botón Borrar historial en su propia fila -->
+            <div class="px-3 pb-2">
+                <button type="button" class="btn btn-sm btn-danger" id="clear-history" style="margin-top: 10px;">Borrar historial</button>
+            </div>
+
+            <div class="modal-body">
+                <div id="history-list"></div>
+            </div>
+        </div>
+    </div>
+</div>
+        <!-- Bootstrap JS bundle -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- App JS -->
+        <script src="app.js"></script>
+</body>
+
+</html>
